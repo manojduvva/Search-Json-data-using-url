@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The json data</title>
+    <style>
+         body > table{
+    width: 80%;
+}
+
+table{
+    border-collapse: collapse;
+}
+table.list{
+    width:100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+tr:nth-child(even),table.list thead>tr {
+    background-color: #dddddd;
+}
+
+input[type=text], input[type=number] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+input[type=submit]{
+    width: 30%;
+    background-color: #ddd;
+    color: #000;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+form div.form-action-buttons{
+    text-align: right;
+}
+
+a{
+    cursor: pointer;
+    text-decoration: underline;
+    color: #0000ee;
+    margin-right: 4px;
+}
+
+label.validation-error{
+    color:   red;
+    margin-left: 5px;
+}
+
+.hide{
+    display:none;
+}
+    </style>
+    <style>
+        body {
+          background: #ccc;
+          font-family: 'Roboto', sans-serif;
+      }
+      .mytabs {
+          display: flex;
+          flex-wrap: wrap;
+          max-width: 600px;
+          margin: 50px auto;
+          padding: 25px;
+      }
+      .mytabs input[type="radio"] {
+          display: none;
+      }
+      .mytabs label {
+          padding: 25px;
+          background: #e2e2e2;
+          font-weight: bold;
+      }
+      
+      .mytabs .tab {
+          width: 100%;
+          padding: 20px;
+          background: #fff;
+          order: 1;
+          display: none;
+      }
+      .mytabs .tab h2 {
+          font-size: 3em;
+      }
+      
+      .mytabs input[type='radio']:checked + label + .tab {
+          display: block;
+      }
+      
+      .mytabs input[type="radio"]:checked + label {
+          background: #fff;
+      }
+      </style>
+</head>
+<body>
+    <h1 style="text-align: center;">The Data table</h1>
+     <table>
+        <tr>
+            <td>
+                <form onsubmit="event.preventDefault();onFormSubmit();" autocomplete="off">
+                    <div>
+                        <label>userId*</label><label class="validation-error hide" id="fullNameValidationError">This field is required.</label>
+                        <input type="text" name="userId" id="userId">
+                    </div>
+                    <div>
+                        <label>id</label>
+                        <input type="text" name="id" id="id">
+                    </div>
+                    <div>
+                        <label>title</label>
+                        <input type="text" name="title" id="title">
+                    </div>
+                    <div>
+                        <label>body</label>
+                        <input type="text" name="body" id="body">
+                    </div>
+                    <div  class="form-action-buttons">
+                        <input type="submit" value="Submit">
+                    </div>
+                </form>
+            </td>
+            <td>
+                <table class="list" id="UserList">
+                    <thead>
+                        <tr>
+                            <th>userId</th>
+                            <th>id</th>
+                            <th>title</th>
+                            <th>body</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <br><br><br>
+    <div class="mytabs">
+        <input type="radio" id="tabfree" name="mytabs" checked="checked">
+        <label for="tabfree">thirds</label>
+        <div class="tab">
+          <h2>thirds</h2>
+          <p>if the id is divisible by 3</p>
+        </div>
+    
+        <input type="radio" id="tabsilver" name="mytabs">
+        <label for="tabsilver">fifths</label>
+        <div class="tab">
+          <h2>fifths</h2>
+          <p>if the id is divisible by 5 </p>
+        </div>
+    
+        <input type="radio" id="tabgold" name="mytabs">
+        <label for="tabgold">magic</label>
+        <div class="tab">
+          <h2>magic</h2>
+          <p>if the id is divisibly by 3 and 5</p>
+          
+        </div>
+    
+      </div>
+</body>
+<script>
+    var selectedRow = null
+
+function onFormSubmit() {
+    if (validate()) {
+        var formData = readFormData();
+        if (selectedRow == null)
+            insertNewRecord(formData);
+        else
+            updateRecord(formData);
+        resetForm();
+    }
+}
+
+function readFormData() {
+    var formData = {};
+    formData["userId"] = document.getElementById("userId").value;
+    formData["id"] = document.getElementById("id").value;
+    formData["title"] = document.getElementById("title").value;
+    formData["body"] = document.getElementById("body").value;
+    return formData;
+}
+
+function insertNewRecord(data) {
+    var table = document.getElementById("UserList").getElementsByTagName('tbody')[0];
+    var newRow = table.insertRow(table.length);
+    cell1 = newRow.insertCell(0);
+    cell1.innerHTML = data.userId;
+    cell2 = newRow.insertCell(1);
+    cell2.innerHTML = data.id;
+    cell3 = newRow.insertCell(2);
+    cell3.innerHTML = data.title;
+    cell4 = newRow.insertCell(3);
+    cell4.innerHTML = data.body;
+    cell4 = newRow.insertCell(4);
+    cell4.innerHTML = `<a onClick="onEdit(this)">Edit</a>
+                       <a onClick="onDelete(this)">Delete</a>`;
+}
+
+function resetForm() {
+    document.getElementById("userId").value = "";
+    document.getElementById("id").value = "";
+    document.getElementById("title").value = "";
+    document.getElementById("body").value = "";
+    selectedRow = null;
+}
+
+function onEdit(td) {
+    selectedRow = td.parentElement.parentElement;
+    document.getElementById("userId").value = selectedRow.cells[0].innerHTML;
+    document.getElementById("id").value = selectedRow.cells[1].innerHTML;
+    document.getElementById("title").value = selectedRow.cells[2].innerHTML;
+    document.getElementById("body").value = selectedRow.cells[3].innerHTML;
+}
+function updateRecord(formData) {
+    selectedRow.cells[0].innerHTML = formData.fullName;
+    selectedRow.cells[1].innerHTML = formData.empCode;
+    selectedRow.cells[2].innerHTML = formData.salary;
+    selectedRow.cells[3].innerHTML = formData.city;
+}
+
+function onDelete(td) {
+    if (confirm('Are you sure to delete this record ?')) {
+        row = td.parentElement.parentElement;
+        document.getElementById("UserList").deleteRow(row.rowIndex);
+        resetForm();
+    }
+}
+function validate() {
+    isValid = true;
+    if (document.getElementById("userId").value == "") {
+        isValid = false;
+        document.getElementById("fullNameValidationError").classList.remove("hide");
+    } else {
+        isValid = true;
+        if (!document.getElementById("fullNameValidationError").classList.contains("hide"))
+            document.getElementById("fullNameValidationError").classList.add("hide");
+    }
+    return isValid;
+}
+</script>
+</html>
